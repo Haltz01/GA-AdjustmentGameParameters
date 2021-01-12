@@ -48,6 +48,7 @@
 enum selectionMethods { TOURNAMENT, ELITISM, ROULETTE };
 selectionMethods selectionMethod = ELITISM;
 
+//arma::mat population1(POPULATION_SIZE, NB_PARAMETERS);
 arma::mat::fixed<POPULATION_SIZE, NB_PARAMETERS> population; // arma::mat : armadillo matrix (Mat<double>)
 // Each LINE (ROW) is the individual's parameters
 double fitness[POPULATION_SIZE];
@@ -64,8 +65,71 @@ void initializePop() {
     //         population[i][j] = (double) (rand() % MAX_PARAM_VALUE); // number range = [0, MAX_PARAM_VALUE[
     //     }
     // }
-    population.randu(); // initialize with values between 0 and 1
-    population = population * MAX_PARAM_VALUE;
+
+    char equal;
+    double value;
+
+    char base[10];
+    char exponent[10];
+
+    FILE* fp;   //file pointer of constValues.cfg
+    fp = fopen("constValues.cfg", "r"); //only read
+    int j = 0;
+    while (true)
+    {
+        if (fscanf(fp, "%c", &equal) == EOF)    //stop reading when finish the archive
+        {
+            break;
+        }
+        
+        if (j == 10)    //the decay_delay_micro isn't a double or float or int
+        {
+            do
+            {
+                fscanf(fp, "%c", &equal);    //read until find the =
+            } while (equal != '=');
+            fscanf(fp, "%c", &equal);   //read only one space
+
+            bool flag = false;
+            int t = 0;
+            do
+            {
+                fscanf(fp, "%c", &equal);
+                if (flag)
+                {
+                    exponent[t] = equal;
+                }
+                else
+                {
+                    base[t] = equal;
+                }
+                
+                if (equal == 'e')
+                {
+                    base[t] = '\0';
+                    flag = true;
+                    t = -1;
+                }
+                t++;
+            } while (equal != '\n');
+            exponent[t - 1] = '\0';
+            printf("base: k%sk exponent: k%sk\n", base, exponent);
+            
+            return;
+        }   
+        if (equal == '=')   //then the next value will be the number
+        {
+            fscanf(fp, "%lf", &value);
+            printf("k%lfk\n", value);
+            population(0, j) = value;  
+            j++;
+        }
+    }
+    fclose(fp); //close the constValues.cfg
+    return;
+
+    //population.randu(); // initialize with values between 0 and 1
+    //population = population * MAX_PARAM_VALUE;
 
     population.print("Population matrix initialized:");
 
@@ -321,6 +385,7 @@ int main(int argc, char * argv[]) {
 
     system("clear");
     initializePop();
+    /*
     createCSV();
     int generationIndex = 0;
 
@@ -335,4 +400,5 @@ int main(int argc, char * argv[]) {
         generationIndex++;
         scanf("%*c");
     }
+    */
 }
