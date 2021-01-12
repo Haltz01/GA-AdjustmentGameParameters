@@ -39,7 +39,7 @@
 // #include <GL/glut.h> /* simple GUI + keyboard usage */
 // #include <loguru.cpp> // logging lib -> https://emilk.github.io/loguru/index.html#loguru
 
-#define NB_PARAMETERS 10 // number of parameters that will be adjusted
+#define NB_PARAMETERS 28 // number of parameters that will be adjusted
 #define POPULATION_SIZE 20
 #define MAX_MUTATION_RATE 0.04 // 4%
 
@@ -71,6 +71,9 @@ void initializePop() {
 
     char base[10];
     char exponent[10];
+    double baseNumber;
+    double exponentNumber;
+    double calculatedNumber;
 
     FILE* fp;   //file pointer of constValues.cfg
     fp = fopen("constValues.cfg", "r"); //only read
@@ -104,7 +107,7 @@ void initializePop() {
                     base[t] = equal;
                 }
                 
-                if (equal == 'e')
+                if (equal == 'e')   //when find the e the next ones will be the exponent
                 {
                     base[t] = '\0';
                     flag = true;
@@ -113,14 +116,19 @@ void initializePop() {
                 t++;
             } while (equal != '\n');
             exponent[t - 1] = '\0';
-            printf("base: k%sk exponent: k%sk\n", base, exponent);
-            
-            return;
+            //printf("base: k%sk exponent: k%sk\n", base, exponent);
+
+            baseNumber = atof(base);
+            exponentNumber = atof(exponent);
+            calculatedNumber = pow(baseNumber, exponentNumber);
+            population(0, j) = calculatedNumber;
+            printf("matriz(%d,%d) = %lf\n", 0, j, calculatedNumber);
+            j++;
         }   
         if (equal == '=')   //then the next value will be the number
         {
             fscanf(fp, "%lf", &value);
-            printf("k%lfk\n", value);
+            printf("matriz(%d,%d) = %lf\n", 0, j, value);
             population(0, j) = value;  
             j++;
         }
