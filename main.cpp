@@ -116,31 +116,46 @@ void initializePop() {
                 t++;
             } while (equal != '\n');
             exponent[t - 1] = '\0';
-            //printf("base: k%sk exponent: k%sk\n", base, exponent);
 
             baseNumber = atof(base);
             exponentNumber = atof(exponent);
             calculatedNumber = pow(baseNumber, exponentNumber);
             population(0, j) = calculatedNumber;
-            printf("matriz(%d,%d) = %lf\n", 0, j, calculatedNumber);
+            //printf("matriz(%d,%d) = %lf\n", 0, j, calculatedNumber);
             j++;
         }   
         if (equal == '=')   //then the next value will be the number
         {
             fscanf(fp, "%lf", &value);
-            printf("matriz(%d,%d) = %lf\n", 0, j, value);
+            //printf("matriz(%d,%d) = %lf\n", 0, j, value);
             population(0, j) = value;  
             j++;
         }
     }
     fclose(fp); //close the constValues.cfg
-    return;
 
     //population.randu(); // initialize with values between 0 and 1
     //population = population * MAX_PARAM_VALUE;
 
-    population.print("Population matrix initialized:");
+    double randdouble;
+    for (size_t i = 1; i < POPULATION_SIZE/2; i++)
+    {
+        for (size_t j = 0; j < NB_PARAMETERS; j++)
+        {
+            randdouble = ((double)rand()/(RAND_MAX));
+            population(i, j) = population(0, j) * randdouble;   //a half of the matrix will have values below then the readed
+        }
+    }
+    for (size_t i = POPULATION_SIZE/2; i < POPULATION_SIZE; i++)
+    {
+        for (size_t j = 0; j < NB_PARAMETERS; j++)
+        {
+            randdouble = rand();
+            population(i, j) = population(0, j) * randdouble;   //a half of the matrix will have values above then the readed
+        }
+    }
 
+    population.print("Population matrix initialized:");
     return;
 }
 
