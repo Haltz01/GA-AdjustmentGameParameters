@@ -59,369 +59,369 @@ double mutationRate = MAX_MUTATION_RATE;
 
 // 1st step: initialize population
 void initializePop() {
-    std::cout << "INITIALIZING POPULATION\n";
-    // for (int i = 0; i < POPULATION_SIZE; i++) {
-    //     for (int j = 0; j < NB_PARAMETERS; j++) {
-    //         population[i][j] = (double) (rand() % MAX_PARAM_VALUE); // number range = [0, MAX_PARAM_VALUE[
-    //     }
-    // }
+	std::cout << "INITIALIZING POPULATION\n";
+	// for (int i = 0; i < POPULATION_SIZE; i++) {
+	//     for (int j = 0; j < NB_PARAMETERS; j++) {
+	//         population[i][j] = (double) (rand() % MAX_PARAM_VALUE); // number range = [0, MAX_PARAM_VALUE[
+	//     }
+	// }
 
-    char equal;
-    double value;
+	char equal;
+	double value;
 
-    char base[10];
-    char exponent[10];
-    double baseNumber;
-    double exponentNumber;
-    double calculatedNumber;
+	char base[10];
+	char exponent[10];
+	double baseNumber;
+	double exponentNumber;
+	double calculatedNumber;
 
-    FILE* fp;   //file pointer of constValues.cfg
-    fp = fopen("constValues.cfg", "r"); //only read
-    int j = 0;
-    while (true)
-    {
-        if (fscanf(fp, "%c", &equal) == EOF)    //stop reading when finish the archive
-        {
-            break;
-        }
-        
-        if (j == 10)    //the decay_delay_micro isn't a double or float or int
-        {
-            do
-            {
-                fscanf(fp, "%c", &equal);    //read until find the =
-            } while (equal != '=');
-            fscanf(fp, "%c", &equal);   //read only one space
+	FILE* fp;   //file pointer of constValues.cfg
+	fp = fopen("constValues.cfg", "r"); //only read
+	int j = 0;
+	while (true)
+	{
+		if (fscanf(fp, "%c", &equal) == EOF)    //stop reading when finish the archive
+		{
+			break;
+		}
+		
+		if (j == 10)    //the decay_delay_micro isn't a double or float or int
+		{
+			do
+			{
+				fscanf(fp, "%c", &equal);    //read until find the =
+			} while (equal != '=');
+			fscanf(fp, "%c", &equal);   //read only one space
 
-            bool flag = false;
-            int t = 0;
-            do
-            {
-                fscanf(fp, "%c", &equal);
-                if (flag)
-                {
-                    exponent[t] = equal;
-                }
-                else
-                {
-                    base[t] = equal;
-                }
-                
-                if (equal == 'e')   //when find the e the next ones will be the exponent
-                {
-                    base[t] = '\0';
-                    flag = true;
-                    t = -1;
-                }
-                t++;
-            } while (equal != '\n');
-            exponent[t - 1] = '\0';
+			bool flag = false;
+			int t = 0;
+			do
+			{
+				fscanf(fp, "%c", &equal);
+				if (flag)
+				{
+					exponent[t] = equal;
+				}
+				else
+				{
+					base[t] = equal;
+				}
+				
+				if (equal == 'e')   //when find the e the next ones will be the exponent
+				{
+					base[t] = '\0';
+					flag = true;
+					t = -1;
+				}
+				t++;
+			} while (equal != '\n');
+			exponent[t - 1] = '\0';
 
-            baseNumber = atof(base);
-            exponentNumber = atof(exponent);
-            calculatedNumber = pow(baseNumber, exponentNumber);
-            population(0, j) = calculatedNumber;
-            //printf("matriz(%d,%d) = %lf\n", 0, j, calculatedNumber);
-            j++;
-        }   
-        if (equal == '=')   //then the next value will be the number
-        {
-            fscanf(fp, "%lf", &value);
-            //printf("matriz(%d,%d) = %lf\n", 0, j, value);
-            population(0, j) = value;  
-            j++;
-        }
-    }
-    fclose(fp); //close the constValues.cfg
+			baseNumber = atof(base);
+			exponentNumber = atof(exponent);
+			calculatedNumber = pow(baseNumber, exponentNumber);
+			population(0, j) = calculatedNumber;
+			//printf("matriz(%d,%d) = %lf\n", 0, j, calculatedNumber);
+			j++;
+		}   
+		if (equal == '=')   //then the next value will be the number
+		{
+			fscanf(fp, "%lf", &value);
+			//printf("matriz(%d,%d) = %lf\n", 0, j, value);
+			population(0, j) = value;  
+			j++;
+		}
+	}
+	fclose(fp); //close the constValues.cfg
 
-    //population.randu(); // initialize with values between 0 and 1
-    //population = population * MAX_PARAM_VALUE;
+	//population.randu(); // initialize with values between 0 and 1
+	//population = population * MAX_PARAM_VALUE;
 
-    double randdouble;
-    for (size_t i = 1; i < POPULATION_SIZE/2; i++)
-    {
-        for (size_t j = 0; j < NB_PARAMETERS; j++)
-        {
-            randdouble = ((double)rand()/(RAND_MAX));
-            population(i, j) = population(0, j) * randdouble;   //a half of the matrix will have values below then the readed
-        }
-    }
-    for (size_t i = POPULATION_SIZE/2; i < POPULATION_SIZE; i++)
-    {
-        for (size_t j = 0; j < NB_PARAMETERS; j++)
-        {
-            randdouble = rand();
-            population(i, j) = population(0, j) * randdouble;   //a half of the matrix will have values above then the readed
-        }
-    }
+	double randdouble;
+	for (size_t i = 1; i < POPULATION_SIZE/2; i++)
+	{
+		for (size_t j = 0; j < NB_PARAMETERS; j++)
+		{
+			randdouble = ((double)rand()/(RAND_MAX));
+			population(i, j) = population(0, j) * randdouble;   //a half of the matrix will have values below then the readed
+		}
+	}
+	for (size_t i = POPULATION_SIZE/2; i < POPULATION_SIZE; i++)
+	{
+		for (size_t j = 0; j < NB_PARAMETERS; j++)
+		{
+			randdouble = rand();
+			population(i, j) = population(0, j) * randdouble;   //a half of the matrix will have values above then the readed
+		}
+	}
 
-    population.print("Population matrix initialized:");
-    return;
+	population.print("Population matrix initialized:");
+	return;
 }
 
 
 double * normalizeFitness() {
-    double normalizedFitness[POPULATION_SIZE];
+	double normalizedFitness[POPULATION_SIZE];
 
-    for (int i = 0; i < POPULATION_SIZE; i++) {
-        normalizedFitness[i] = (fitness[i]-minFitness)/(maxFitness-minFitness);
-    }
+	for (int i = 0; i < POPULATION_SIZE; i++) {
+		normalizedFitness[i] = (fitness[i]-minFitness)/(maxFitness-minFitness);
+	}
 
-    return normalizedFitness;
+	return normalizedFitness;
 }
 
 // 2nd step: evaluate population (calculate fitness)
 void evaluatePop() {
-    std::cout << "EVALUATING POPULATION\n";
+	std::cout << "EVALUATING POPULATION\n";
 
-    // I don't know how the population will be evaluated yet...
+	// I don't know how the population will be evaluated yet...
 
-    for (int i = 0; i < POPULATION_SIZE; i++) { 
-        // example of fitness calculation -> CHANGE!!!!
-        fitness[i] = arma::sum(population.row(i));
+	for (int i = 0; i < POPULATION_SIZE; i++) { 
+		// example of fitness calculation -> CHANGE!!!!
+		fitness[i] = arma::sum(population.row(i));
 
-        if (maxFitness < fitness[i]) { // searching for the  max fitnnes from new generation
-            maxFitness = fitness[i];
-            maxFitIndex = i;
-        }
-        else if (fitness[i] < minFitness)
-            minFitness = fitness[i];
+		if (maxFitness < fitness[i]) { // searching for the  max fitnnes from new generation
+			maxFitness = fitness[i];
+			maxFitIndex = i;
+		}
+		else if (fitness[i] < minFitness)
+			minFitness = fitness[i];
 
-        // printf("fitness[%d] %lf\n", i, fitness[i]);
-    }
+		// printf("fitness[%d] %lf\n", i, fitness[i]);
+	}
 
-    printf("MAX FITNESS: %lf - INDEX: %d\n", maxFitness, maxFitIndex);
+	printf("MAX FITNESS: %lf - INDEX: %d\n", maxFitness, maxFitIndex);
 
-    return;
+	return;
 }
 
 void crossover(int i, arma::rowvec parent1, arma::rowvec parent2) {
-    // for(int j = 0; j < NB_PARAMETERS; j++){
-    //     population[i][j] = (parent1[j] + parent2[j])/2.0;        
-    // }
-    population.row(i) = (parent1 + parent2)/2.0;
+	// for(int j = 0; j < NB_PARAMETERS; j++){
+	//     population[i][j] = (parent1[j] + parent2[j])/2.0;        
+	// }
+	population.row(i) = (parent1 + parent2)/2.0;
 
-    return;
+	return;
 }
 
 void elitism() {
-    std::cout << "ELITISM\n";
-    arma::rowvec bestIndv = population.row(maxFitIndex);
-    
-    for (int i = 0; i < POPULATION_SIZE; i++) {
-        if (i == maxFitIndex) // keeping the best individual (no changes are made to it)
-            continue;
-        
-        // crossover
-        crossover(i, population.row(i), bestIndv);
-    }
+	std::cout << "ELITISM\n";
+	arma::rowvec bestIndv = population.row(maxFitIndex);
+	
+	for (int i = 0; i < POPULATION_SIZE; i++) {
+		if (i == maxFitIndex) // keeping the best individual (no changes are made to it)
+			continue;
+		
+		// crossover
+		crossover(i, population.row(i), bestIndv);
+	}
 
-    return;
+	return;
 }
 
 void tournament() {
-    std::cout << "TOURNAMENT\n";
-    arma::mat::fixed<POPULATION_SIZE, NB_PARAMETERS> oldPopulation;
-    int parentIndex[2]; 
-    
-    // copying last population (new one will be different)
-    // for (int i = 0; i < POPULATION_SIZE; i++) {
-    //     for (int j = 0; j < NB_PARAMETERS; j++) {
-    //         oldPopulation[i][j] = population[i][j];
-    //     }
-    // }
-    oldPopulation = population;
+	std::cout << "TOURNAMENT\n";
+	arma::mat::fixed<POPULATION_SIZE, NB_PARAMETERS> oldPopulation;
+	int parentIndex[2]; 
+	
+	// copying last population (new one will be different)
+	// for (int i = 0; i < POPULATION_SIZE; i++) {
+	//     for (int j = 0; j < NB_PARAMETERS; j++) {
+	//         oldPopulation[i][j] = population[i][j];
+	//     }
+	// }
+	oldPopulation = population;
 
-    for (int i = 0; i < POPULATION_SIZE; i++) {
-        if (i == maxFitIndex)
-            continue;
-        
-        // chossing parents for new individual
-        for (int j = 0; j < 2; j++) {
-            int indexIndA = rand() % POPULATION_SIZE; // indv 1 that will "fight" to be parent
-            int indexIndB = rand() % POPULATION_SIZE; // indv 2 that will "fight" to be parent
+	for (int i = 0; i < POPULATION_SIZE; i++) {
+		if (i == maxFitIndex)
+			continue;
+		
+		// chossing parents for new individual
+		for (int j = 0; j < 2; j++) {
+			int indexIndA = rand() % POPULATION_SIZE; // indv 1 that will "fight" to be parent
+			int indexIndB = rand() % POPULATION_SIZE; // indv 2 that will "fight" to be parent
 
-            parentIndex[j] = (fitness[indexIndA] > fitness[indexIndB]) ? indexIndA : indexIndB;
-        }
+			parentIndex[j] = (fitness[indexIndA] > fitness[indexIndB]) ? indexIndA : indexIndB;
+		}
 
-        // crossover
-        crossover(i, oldPopulation.row(parentIndex[0]), oldPopulation.row(parentIndex[1]));
-    }
+		// crossover
+		crossover(i, oldPopulation.row(parentIndex[0]), oldPopulation.row(parentIndex[1]));
+	}
 
-    return;
+	return;
 }
 
 void roulette() {
-    std::cout << "ROULETTE\n";
-    arma::mat::fixed<POPULATION_SIZE, NB_PARAMETERS> oldPopulation;
-    double standardizedFitness[POPULATION_SIZE];
-    int parentIndex[2], rNb; 
-    double probSum = 0.0, partialSum = 0.0;
-    
-    // copying last population (new one will be different)
-    // for (int i = 0; i < POPULATION_SIZE; i++) {
-    //     for (int j = 0; j < NB_PARAMETERS; j++) {
-    //         oldPopulation[i][j] = population[i][j];
-    //     }
-    // }
-    oldPopulation = population;
+	std::cout << "ROULETTE\n";
+	arma::mat::fixed<POPULATION_SIZE, NB_PARAMETERS> oldPopulation;
+	double standardizedFitness[POPULATION_SIZE];
+	int parentIndex[2], rNb; 
+	double probSum = 0.0, partialSum = 0.0;
+	
+	// copying last population (new one will be different)
+	// for (int i = 0; i < POPULATION_SIZE; i++) {
+	//     for (int j = 0; j < NB_PARAMETERS; j++) {
+	//         oldPopulation[i][j] = population[i][j];
+	//     }
+	// }
+	oldPopulation = population;
 
-    // Standardize fitness (set probabilites that add up to 100%)
-    for (int i = 0; i < POPULATION_SIZE; i++)
-        probSum += fitness[i];
-    for (int i = 0; i < POPULATION_SIZE; i++)
-        standardizedFitness[i] = fitness[i]/probSum;
-    
-    // Chosing new parents for each individual
-    for (int i = 0; i < POPULATION_SIZE; i++) {
-        if (i == maxFitIndex) // preserves best individual
-            continue;
-        
-        for (int k = 0; k < 2; k++) { // chosing 2 parents
-            rNb = ((double) rand() / RAND_MAX); // rand between 0 and 1
-            partialSum = 0.0;
+	// Standardize fitness (set probabilites that add up to 100%)
+	for (int i = 0; i < POPULATION_SIZE; i++)
+		probSum += fitness[i];
+	for (int i = 0; i < POPULATION_SIZE; i++)
+		standardizedFitness[i] = fitness[i]/probSum;
+	
+	// Chosing new parents for each individual
+	for (int i = 0; i < POPULATION_SIZE; i++) {
+		if (i == maxFitIndex) // preserves best individual
+			continue;
+		
+		for (int k = 0; k < 2; k++) { // chosing 2 parents
+			rNb = ((double) rand() / RAND_MAX); // rand between 0 and 1
+			partialSum = 0.0;
 
-            for (int j = 0; j < POPULATION_SIZE; j++) { // randomly chosing and individual according to its fitness (+fitness = +probabity)
-                partialSum += fitness[j];
-                if (partialSum >= rNb) {
-                    parentIndex[k] = j; // new parent at index j
-                    break;
-                }
-            }
-        }
+			for (int j = 0; j < POPULATION_SIZE; j++) { // randomly chosing and individual according to its fitness (+fitness = +probabity)
+				partialSum += fitness[j];
+				if (partialSum >= rNb) {
+					parentIndex[k] = j; // new parent at index j
+					break;
+				}
+			}
+		}
 
-        // crossover
-        crossover(i, oldPopulation.row(parentIndex[0]), oldPopulation.row(parentIndex[1]));
-    }
+		// crossover
+		crossover(i, oldPopulation.row(parentIndex[0]), oldPopulation.row(parentIndex[1]));
+	}
 }
 
 
 // 3rd step: selection + mutation and crossover
 void selection() { // tournament, elitism, roulette...
-    std::cout << "SELECTION\n";
-    /* 
-    https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)
-    https://medium.com/datadriveninvestor/genetic-algorithms-selection-5634cfc45d78
-    https://www.researchgate.net/publication/259461147_Selection_Methods_for_Genetic_Algorithms
+	std::cout << "SELECTION\n";
+	/* 
+	https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)
+	https://medium.com/datadriveninvestor/genetic-algorithms-selection-5634cfc45d78
+	https://www.researchgate.net/publication/259461147_Selection_Methods_for_Genetic_Algorithms
 
-    Stochastic Uniform (Fitness Proportionate) -> PROB THE BEST?
-    */
+	Stochastic Uniform (Fitness Proportionate) -> PROB THE BEST?
+	*/
 
-    // Selection method (+ crossover)
-    switch (selectionMethod) {
-        case TOURNAMENT:
-            tournament();
-            break;
-        case ELITISM:
-            elitism();
-            break;
-        case ROULETTE:
-            roulette();
-            break;
-    }
+	// Selection method (+ crossover)
+	switch (selectionMethod) {
+		case TOURNAMENT:
+			tournament();
+			break;
+		case ELITISM:
+			elitism();
+			break;
+		case ROULETTE:
+			roulette();
+			break;
+	}
 
-    // Isso aqui pode mudar, ou não, a mutação pode ocorrer em todos os parametros, ou não.
-    // Isso depende de caso a caso, normalmente é feito a mutação em cada indivíduo, mas em 
-    // apenas um parâmetro aleatório desse indivíduo. 
-    // Todavia, em alguns casos é interessante fazer a mutação em todos os parâmtros como 
-    // está sendo feito aqui. É importante testar.
+	// Isso aqui pode mudar, ou não, a mutação pode ocorrer em todos os parametros, ou não.
+	// Isso depende de caso a caso, normalmente é feito a mutação em cada indivíduo, mas em 
+	// apenas um parâmetro aleatório desse indivíduo. 
+	// Todavia, em alguns casos é interessante fazer a mutação em todos os parâmtros como 
+	// está sendo feito aqui. É importante testar.
 
-    // Mutation
+	// Mutation
 
-    // Mutating all params from individuals
-    // arma::rowvec bestIndv = population.row(maxFitIndex);
+	// Mutating all params from individuals
+	// arma::rowvec bestIndv = population.row(maxFitIndex);
 
-    // arma::mat mutateMatrix(POPULATION_SIZE, NB_PARAMETERS, arma::fill::randu);
-    // mutateMatrix = ((mutateMatrix * MAX_PARAM_VALUE) - MAX_PARAM_VALUE/2.0) * mutationRate;
+	// arma::mat mutateMatrix(POPULATION_SIZE, NB_PARAMETERS, arma::fill::randu);
+	// mutateMatrix = ((mutateMatrix * MAX_PARAM_VALUE) - MAX_PARAM_VALUE/2.0) * mutationRate;
 
-    // population = population + mutateMatrix;
+	// population = population + mutateMatrix;
 
-    // population.row(maxFitIndex) = bestIndv;
-    // population.transform( [](double x) { return ((x < 0 || x > MAX_PARAM_VALUE) ? abs(MAX_PARAM_VALUE-abs(x)) : x); } );
-    
-    // Mutating only one parameter from each individual
-    for (int i = 0; i < POPULATION_SIZE; i++) { 
-        if (i == maxFitIndex)
-            continue; // don't mutate the best from last generation
+	// population.row(maxFitIndex) = bestIndv;
+	// population.transform( [](double x) { return ((x < 0 || x > MAX_PARAM_VALUE) ? abs(MAX_PARAM_VALUE-abs(x)) : x); } );
+	
+	// Mutating only one parameter from each individual
+	for (int i = 0; i < POPULATION_SIZE; i++) { 
+		if (i == maxFitIndex)
+			continue; // don't mutate the best from last generation
 
-        int mutateParamIndex = rand() % NB_PARAMETERS; // index of parameter that will be mutated
-        population(i, mutateParamIndex) += (((double) (rand() % MAX_PARAM_VALUE) - MAX_PARAM_VALUE/2.0) * (mutationRate));
+		int mutateParamIndex = rand() % NB_PARAMETERS; // index of parameter that will be mutated
+		population(i, mutateParamIndex) += (((double) (rand() % MAX_PARAM_VALUE) - MAX_PARAM_VALUE/2.0) * (mutationRate));
 
-        if (population(i, mutateParamIndex) < 0)
-            population(i, mutateParamIndex) += MAX_PARAM_VALUE;
-        else if (population(i, mutateParamIndex) > MAX_PARAM_VALUE)
-            population(i, mutateParamIndex) -= MAX_PARAM_VALUE;
-    }
-    
-    return;
+		if (population(i, mutateParamIndex) < 0)
+			population(i, mutateParamIndex) += MAX_PARAM_VALUE;
+		else if (population(i, mutateParamIndex) > MAX_PARAM_VALUE)
+			population(i, mutateParamIndex) -= MAX_PARAM_VALUE;
+	}
+	
+	return;
 }
 
 // Initialize .csv file to sabe data from the EA
 // Creates the column's headers
 // generation, paramsIndv1, fitnessIndv1 ..., paramsIndvN, fitnessIndvN, bestParams, bestFitness
 void createCSV() {
-    std::ofstream csvFileWriter;
+	std::ofstream csvFileWriter;
 
-    csvFileWriter.open("historyEA.csv");
-    if (!csvFileWriter.good()) {
-        std::cout << "[!] Error occurred while trying to create historyEA.csv!\n";
-        return;
-    }
-    
-    csvFileWriter << "generation,";
-    for (int i = 0; i < POPULATION_SIZE; i++)
-        csvFileWriter << "paramsIndv" << i << ",fitnessIndv" << i << ",";
-    csvFileWriter << "paramsBestIndv,fitnessBestIndv\n";
+	csvFileWriter.open("historyEA.csv");
+	if (!csvFileWriter.good()) {
+		std::cout << "[!] Error occurred while trying to create historyEA.csv!\n";
+		return;
+	}
+	
+	csvFileWriter << "generation,";
+	for (int i = 0; i < POPULATION_SIZE; i++)
+		csvFileWriter << "paramsIndv" << i << ",fitnessIndv" << i << ",";
+	csvFileWriter << "paramsBestIndv,fitnessBestIndv\n";
 }
 
 std::string formatParamsString(int indvIndex) {
-    std::string paramsFormated = "[ ";
-    for (int i = 0; i < NB_PARAMETERS; i++) {
-        paramsFormated += std::to_string(population(indvIndex, i));
-        paramsFormated += " ";
-    }
-    paramsFormated += "]";
+	std::string paramsFormated = "[ ";
+	for (int i = 0; i < NB_PARAMETERS; i++) {
+		paramsFormated += std::to_string(population(indvIndex, i));
+		paramsFormated += " ";
+	}
+	paramsFormated += "]";
 
-    return paramsFormated;
+	return paramsFormated;
 }
 
 // Saves information about a generation in a .csv file
 // Information: generation, paramsIndv1, fitnessIndv1 ..., paramsIndvN, fitnessIndvN, bestParams, bestFitness
 void saveGenerationData(int generation) {
-    std::ofstream csvFileWriter;
+	std::ofstream csvFileWriter;
 
-    csvFileWriter.open("historyEA.csv", std::ios_base::app); // append instead of overwrite
-    if (!csvFileWriter.good()) {
-        std::cout << "[!] Error occurred while trying to open historyEA.csv!\n";
-        return;
-    }
-    
-    csvFileWriter << generation << ",";
-    for (int i = 0; i < POPULATION_SIZE; i++) {
-        csvFileWriter << formatParamsString(i) << "," << fitness[i] << ",";
-    }
-    csvFileWriter << formatParamsString(maxFitIndex) << "," << maxFitness << "\n";
+	csvFileWriter.open("historyEA.csv", std::ios_base::app); // append instead of overwrite
+	if (!csvFileWriter.good()) {
+		std::cout << "[!] Error occurred while trying to open historyEA.csv!\n";
+		return;
+	}
+	
+	csvFileWriter << generation << ",";
+	for (int i = 0; i < POPULATION_SIZE; i++) {
+		csvFileWriter << formatParamsString(i) << "," << fitness[i] << ",";
+	}
+	csvFileWriter << formatParamsString(maxFitIndex) << "," << maxFitness << "\n";
 }
 
 int main(int argc, char * argv[]) {
-    srand(time(NULL));
+	srand(time(NULL));
 
-    system("clear");
-    initializePop();
-    /*
-    createCSV();
-    int generationIndex = 0;
+	system("clear");
+	initializePop();
+	
+	createCSV();
+	int generationIndex = 0;
 
-    while (true) {
-        std::cout << "\n==== Generation " << generationIndex << " ====\n";
-        // population.print("Current population:");
-        evaluatePop();
-        selection();
-        
-        saveGenerationData(generationIndex);
+	while (true) {
+		std::cout << "\n==== Generation " << generationIndex << " ====\n";
+		// population.print("Current population:");
+		evaluatePop();
+		selection();
+		
+		saveGenerationData(generationIndex);
 
-        generationIndex++;
-        scanf("%*c");
-    }
-    */
+		generationIndex++;
+		scanf("%*c");
+	}
+	
 }
